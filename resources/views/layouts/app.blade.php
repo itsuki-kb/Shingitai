@@ -43,7 +43,7 @@
         @endisset
 
         {{-- メイン --}}
-        <main class="flex-none max-w-5xl mx-auto px-4 py-8">
+        <main class="w-full max-w-5xl min-w-[640px] mx-auto px-4 py-8 min-h-[60vh]">
             {{ $slot }}
         </main>
 

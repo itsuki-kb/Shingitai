@@ -16,7 +16,7 @@
     @endif
 
     @forelse ($all_posts as $post)
-        <div class="bg-stone-50 border border-stone-200 rounded-xl p-6 mb-6 shadow-sm w-full">
+        <div class="bg-stone-50 border border-stone-200 rounded-xl p-6 mb-6 shadow-sm w-full min-w-[640px]">
             {{-- Header --}}
             <div class="flex justify-between items-center mb-3">
                 <div class="text-stone-600 text-sm">
@@ -27,7 +27,7 @@
             {{-- 心技体：横並び表示 --}}
             <div class="flex flex-col md:flex-row gap-4">
                 @foreach ($post->elements as $element)
-                    <div class="flex-1 bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <a href="{{ route('post.show', $post->id) }}" class='flex-1 bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:bg-gray-50'>
                         <div class="flex justify-between items-center mb-2">
                             <h3 class="text-lg font-semibold text-gray-700 tracking-wide">
                                 {{ $element->category }}
@@ -45,7 +45,7 @@
                         <p class="text-sm text-gray-600 line-clamp-5 leading-relaxed">
                             {{ $element->content }}
                         </p>
-                    </div>
+                    </a>
                 @endforeach
             </div>
 
@@ -57,13 +57,16 @@
                         <i class="fas fa-pen mr-1"></i> 編集
                     </a>
 
-                    <button data-bs-toggle="modal" data-bs-target="#delete-post-{{ $post->id }}"
-                        class="inline-flex items-center px-4 py-1 bg-rose-600 text-white rounded shadow hover:bg-rose-700 text-sm">
+                    <button
+                        x-data
+                        x-on:click="$dispatch('open-modal', 'delete-post-{{ $post->id }}')"
+                        class="inline-flex items-center px-4 py-1 bg-rose-600 text-white rounded shadow hover:bg-rose-700 text-sm"
+                    >
                         <i class="fas fa-trash-alt mr-1"></i> 削除
                     </button>
 
-                    {{-- モーダル読み込み（後で有効化） --}}
-                    {{-- @include('posts.modal.delete') --}}
+                    {{-- モーダル読み込み --}}
+                    <x-posts.modal.delete :post="$post" />
                 </div>
             @endif
         </div>

@@ -16,7 +16,7 @@ Route::get('/dashboard', function () {
 //以下の機能はすべてログインしているユーザーに限定する
 Route::middleware('auth')->group(function () {
     //トップページ（タイムライン）
-    Route::get('/index', [PostController::class, 'index']);
+    //Route::get('/index', [PostController::class, 'index']);
 
     //Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
