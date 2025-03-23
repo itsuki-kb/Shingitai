@@ -1,5 +1,21 @@
 @php
-$defaultCondition = old($name, 'true');; // default = 陽(True)
+    //心技体のconditionをtrue(1)と前提し、DBから取得したデータがfalse(0)なら以下でそれぞれ変更する
+    $stored_condition = 'true';
+
+    if ($name === 'heart_condition' && $conditions[0] == 0) {
+        $stored_condition = 'false';
+    }
+
+    if ($name === 'skill_condition' && $conditions[1] == 0) {
+        $stored_condition = 'false';
+    }
+
+    if ($name === 'body_condition' && $conditions[2] == 0) {
+        $stored_condition = 'false';
+    }
+    // 新たに入力した値がない限り、データベースの値が適用される
+    $defaultCondition = old($name, $stored_condition);
+
 @endphp
 
 <div x-data="{ condition: '{{ $defaultCondition }}' }" class="flex">
@@ -28,7 +44,4 @@ $defaultCondition = old($name, 'true');; // default = 陽(True)
         </button>
     </div>
 
-        @error('{{ $name }}')
-            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
-        @enderror
 </div>
