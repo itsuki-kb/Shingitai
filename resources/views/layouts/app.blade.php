@@ -35,8 +35,8 @@
 
         {{-- ページヘッダー --}}
         @isset($header)
-            <header class="bg-white border-b border-amber-300 shadow-sm">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <header class="">
+                <div class="w-full max-w-5xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
                     {{ $header }}
                 </div>
             </header>

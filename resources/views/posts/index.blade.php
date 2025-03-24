@@ -1,9 +1,7 @@
-
-
 <x-app-layout>
     <x-slot name="header">
-        <h1 class="text-2xl font-semibold text-gray-800 tracking-widest border-b-2 border-amber-500 pb-2">
-            全ての投稿一覧 🌿
+        <h1 class="text-xl font-semibold text-gray-800 tracking-widest  pb-2">
+            投稿一覧
         </h1>
     </x-slot>
 
@@ -20,7 +18,10 @@
             {{-- Header --}}
             <div class="flex justify-between items-center mb-3">
                 <div class="text-stone-600 text-sm">
-                    📅 {{ $post->date }}  👤 {{ $post->user->name }}
+                    📅 {{ $post->date }}
+                    <a href="{{ route('profile.show', $post->user_id) }}">
+                        👤 {{ $post->user->name }}
+                    </a>
                 </div>
             </div>
 
@@ -49,26 +50,33 @@
                 @endforeach
             </div>
 
-            {{-- アクションボタン --}}
-            @if ($post->user_id === Auth::id())
-                <div class="mt-4 text-end space-x-2">
-                    <a href="{{ route('post.edit', $post->id) }}"
-                        class="inline-flex items-center px-4 py-1 bg-amber-600 text-white rounded shadow hover:bg-amber-700 text-sm">
-                        <i class="fas fa-pen mr-1"></i> 編集
-                    </a>
-
-                    <button
-                        x-data
-                        x-on:click="$dispatch('open-modal', 'delete-post-{{ $post->id }}')"
-                        class="inline-flex items-center px-4 py-1 bg-rose-600 text-white rounded shadow hover:bg-rose-700 text-sm"
-                    >
-                        <i class="fas fa-trash-alt mr-1"></i> 削除
-                    </button>
-
-                    {{-- モーダル読み込み --}}
-                    <x-posts.modal.delete :post="$post" />
+            {{-- Like --}}
+            <div class="flex justify-between pt-4">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-heart d-block text-red-600"></i> Likes function will be here
                 </div>
-            @endif
+
+                {{-- アクションボタン --}}
+                @if ($post->user_id === Auth::id())
+                    <div class="flex text-end space-x-2 items-center">
+                        <a href="{{ route('post.edit', $post->id) }}"
+                            class="inline-flex items-center px-4 py-1 bg-amber-600 text-white rounded shadow hover:bg-amber-700 text-sm">
+                            <i class="fas fa-pen mr-1"></i> 編集
+                        </a>
+
+                        <button
+                            x-data
+                            x-on:click="$dispatch('open-modal', 'delete-post-{{ $post->id }}')"
+                            class="inline-flex items-center px-4 py-1 bg-rose-600 text-white rounded shadow hover:bg-rose-700 text-sm"
+                        >
+                            <i class="fas fa-trash-alt mr-1"></i> 削除
+                        </button>
+
+                        {{-- モーダル読み込み --}}
+                        <x-posts.modal.delete :post="$post" />
+                    </div>
+                @endif
+            </div>
         </div>
     @empty
         <div class="text-center mt-40">

@@ -2,15 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Post;
+use App\Models\User;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use App\Http\Requests\ProfileUpdateRequest;
 
 class ProfileController extends Controller
 {
+    private $user;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
+
+    public function show($user_id)
+    {
+        $user = $this->user->findOrFail($user_id);
+        $all_posts = $user->posts()->with('elements')->latest('date')->paginate(10);
+
+        return view('profile.show', compact('user', 'all_posts'));
+
+    }
+
+
     /**
      * Display the user's profile form.
      */
@@ -28,8 +49,23 @@ class ProfileController extends Controller
     {
         $request->user()->fill($request->validated());
 
+        // メールアドレスの変更があれば、verified_atがリセットされる
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
+        }
+
+        //Avatar画像の保存
+        if ($request->hasFile('avatar')) {
+            // 古い画像がある場合、削除
+            if ($request->user()->avatar) {
+                Storage::disk('public')->delete($request->user()->avatar);
+            }
+
+            // 新しい画像を保存
+            // storage/app/public/avatarsに保存される
+            // 'public' → ファイルシステムのディスク名（config/filesystems.php の 'disks.public'）を指定
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $request->user()->avatar = $avatarPath;
         }
 
         $request->user()->save();
