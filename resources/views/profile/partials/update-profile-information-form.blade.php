@@ -13,7 +13,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
 
@@ -47,6 +47,28 @@
             @endif
         </div>
 
+        {{-- Profile文章を追加 --}}
+        <div>
+            <x-input-label for="profile" :value="__('Profile (300文字以内)')" />
+            <textarea name="profile" id="profile" rows="5" maxlength="300" class="mt-1 block w-full h-100 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                      placeholder="300文字以内でプロフィールを入力してください。">{{ old('profile', $user->profile) }}</textarea>
+            <x-input-error class="mt-2" :messages="$errors->get('profile')" />
+        </div>
+
+        {{-- Avatar画像を追加 --}}
+        <div>
+            <label for="avatar" class="block font-medium text-sm text-gray-700">Avatar</label>
+            <input
+                type="file"
+                name="avatar"
+                id="avatar"
+                accept="image/*"
+                class="mt-1 block w-full text-sm text-gray-500"
+            >
+            <x-input-error class="mt-2" :messages="$errors->get('avatar')" />
+        </div>
+
+        {{--　ボタン --}}
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 

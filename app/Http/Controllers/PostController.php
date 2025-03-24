@@ -92,7 +92,7 @@ class PostController extends Controller
             ]
         ]);
 
-        return redirect()->route('posts.index')->with('success', '投稿が完了しました！');
+        return redirect()->route('post.index')->with('success', '投稿が完了しました！');
 
     }
 
@@ -138,11 +138,11 @@ class PostController extends Controller
         $validated = $request->validate([
             'date'            => 'required',
             'heart_condition' => 'required|in:true,false',
-            'heart_content'   => 'required|string',
+            'heart_content'   => 'required|string|max:500',
             'skill_condition' => 'required|in:true,false',
-            'skill_content'   => 'required|string',
+            'skill_content'   => 'required|string|max:500',
             'body_condition'  => 'required|in:true,false',
-            'body_content'    => 'required|string'
+            'body_content'    => 'required|string|max:500'
         ]);
 
         // 文字列 "true"/"false" → 数値 1/0 に変換
