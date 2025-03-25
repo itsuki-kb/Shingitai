@@ -37,7 +37,7 @@
     @forelse ($all_posts as $post)
         <div class="bg-stone-50 border border-stone-200 rounded-xl p-6 mb-6 shadow-sm w-full min-w-[640px]">
             {{-- Header --}}
-            <div class="flex justify-between items-center mb-3">
+            <div class="flex justify-between items-center mb-3 ms-2">
                 <div class="text-stone-600 text-sm">
                     📅 {{ $post->date }}  👤 {{ $post->user->name }}
                 </div>
@@ -68,26 +68,33 @@
                 @endforeach
             </div>
 
-            {{-- アクションボタン --}}
-            @if ($post->user_id === Auth::id())
-                <div class="mt-4 text-end space-x-2">
-                    <a href="{{ route('post.edit', $post->id) }}"
-                        class="inline-flex items-center px-4 py-1 bg-amber-600 text-white rounded shadow hover:bg-amber-700 text-sm">
-                        <i class="fas fa-pen mr-1"></i> 編集
-                    </a>
+            <div class="flex justify-between pt-4">
+                {{-- Likes --}}
+                <div class="flex items-center ms-2">
+                    <x-posts.likes :post="$post" :liked_post_ids="$liked_post_ids"></x-posts-likes>
+                </div>
 
-                    <button
+                {{-- アクションボタン --}}
+                @if ($post->user_id === Auth::id())
+                    <div class="flex text-end space-x-2 items-center">
+                        <a href="{{ route('post.edit', $post->id) }}"
+                            class="inline-flex items-center px-4 py-1 bg-amber-600 text-white rounded shadow hover:bg-amber-700 text-sm">
+                            <i class="fas fa-pen mr-1"></i> 編集
+                        </a>
+
+                        <button
                         x-data
                         x-on:click="$dispatch('open-modal', 'delete-post-{{ $post->id }}')"
                         class="inline-flex items-center px-4 py-1 bg-rose-600 text-white rounded shadow hover:bg-rose-700 text-sm"
-                    >
-                        <i class="fas fa-trash-alt mr-1"></i> 削除
-                    </button>
+                        >
+                            <i class="fas fa-trash-alt mr-1"></i> 削除
+                        </button>
 
-                    {{-- モーダル読み込み --}}
-                    <x-posts.modal.delete :post="$post" />
-                </div>
-            @endif
+                        {{-- モーダル読み込み --}}
+                        <x-posts.modal.delete :post="$post" />
+                    </div>
+                @endif
+            </div>
         </div>
     @empty
         <div class="text-center mt-40">

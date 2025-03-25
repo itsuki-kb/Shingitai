@@ -16,7 +16,7 @@
     @forelse ($all_posts as $post)
         <div class="bg-stone-50 border border-stone-200 rounded-xl p-6 mb-6 shadow-sm w-full min-w-[640px]">
             {{-- Header --}}
-            <div class="flex justify-between items-center mb-3">
+            <div class="flex justify-between items-center mb-3 ms-2">
                 <div class="text-stone-600 text-sm">
                     📅 {{ $post->date }}
                     <a href="{{ route('profile.show', $post->user_id) }}">
@@ -50,10 +50,10 @@
                 @endforeach
             </div>
 
-            {{-- Like --}}
             <div class="flex justify-between pt-4">
-                <div class="flex items-center">
-                    <i class="fa-solid fa-heart d-block text-red-600"></i> Likes function will be here
+                {{-- Likes --}}
+                <div class="flex items-center ms-2">
+                    <x-posts.likes :post="$post" :liked_post_ids="$liked_post_ids"></x-posts-likes>
                 </div>
 
                 {{-- アクションボタン --}}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,11 +22,19 @@ class PostController extends Controller
      */
     public function index()
     {
-        // elements()も同時にEager Loadingで取得
-        $all_posts = $this->post->with('elements')->latest()->paginate(10);
+        // elements()とlikes()を同時にEager Loadingで取得
+        $all_posts = $this->post
+            ->with('elements', 'likes')
+            ->withCount('likes')    //likeの数も取得
+            ->latest()
+            ->paginate(10);
 
-        return view('posts.index')
-            ->with('all_posts', $all_posts);
+        //ログインユーザーがLikeしてあるポスト一覧のpost_idだけをArray形式で取得
+        $liked_post_ids = Like::where('user_id', Auth::user()->id)
+            ->pluck('post_id')
+            ->toArray();
+
+        return view('posts.index', compact('all_posts', 'liked_post_ids'));
     }
 
     /**
@@ -103,9 +112,15 @@ class PostController extends Controller
     {
         $post = $this->post
             ->with(['user', 'elements'])
+            ->withCount('likes')
             ->findOrFail($post_id);
 
-        return view('posts.show')->with('post', $post);
+        $liked_post_ids = Like::where('user_id', Auth::user()->id)
+            ->where('post_id', $post_id)
+            ->pluck('post_id')
+            ->toArray();
+
+        return view('posts.show', compact('post', 'liked_post_ids'));
     }
 
     /**
