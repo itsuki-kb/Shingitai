@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\View\View;
@@ -25,9 +26,18 @@ class ProfileController extends Controller
     public function show($user_id)
     {
         $user = $this->user->findOrFail($user_id);
-        $all_posts = $user->posts()->with('elements')->latest('date')->paginate(10);
+        $all_posts = $user->posts()
+            ->with('elements')
+            ->withCount('likes')
+            ->latest('date')
+            ->paginate(10);
 
-        return view('profile.show', compact('user', 'all_posts'));
+        //ログインユーザーがLikeしてあるポスト一覧のpost_idだけをArray形式で取得
+        $liked_post_ids = Like::where('user_id', Auth::user()->id)
+            ->pluck('post_id')
+            ->toArray();
+
+        return view('profile.show', compact('user', 'all_posts', 'liked_post_ids'));
 
     }
 

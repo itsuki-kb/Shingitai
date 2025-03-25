@@ -1,22 +1,27 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold text-stone-700 tracking-wide border-b border-amber-400 pb-1">
-            {{ $post->user->name }} さんの投稿
+        <h2 class="text-xl font-semibold text-gray-800 tracking-widest  pb-2">
+            投稿詳細
         </h2>
     </x-slot>
 
-    <div class="w-full max-w-3xl mx-auto min-w-[320px] bg-white mt-12 p-8 rounded-2xl shadow-sm border border-stone-200 space-y-10">
+    <div class="bg-stone-50 border border-stone-200 rounded-xl p-6 mb-6 shadow-sm w-full min-w-[640px]">
 
-        {{-- 日付とユーザー --}}
-        <div class="text-center space-y-2">
-            <p class="text-sm text-stone-500">{{ \Carbon\Carbon::parse($post->date)->format('Y年n月j日') }}</p>
-            <p class="text-md font-semibold text-stone-700">{{ $post->user->name }}</p>
+        {{-- 日付とユーザーとLike--}}
+        <div class="flex justify-between mb-8 ps-2 pe-2">
+            <div class="flex flex-col flex-start">
+                <p class="text-sm text-stone-500 pb-2">{{ $post->date }}</p>
+                <p class="text-md font-semibold text-stone-700">{{ $post->user->name }}</p>
+            </div>
+            <div class="flex content-end me-1">
+                <x-posts.likes :post="$post" :liked_post_ids="$liked_post_ids"></x-posts-likes>
+            </div>
         </div>
 
         {{-- 心技体の内容 --}}
         <div class="space-y-6">
             @foreach ($post->elements as $element)
-                <div class="p-6 rounded-lg shadow-sm border border-stone-100 bg-stone-50">
+                <div class="p-6 rounded-lg shadow-sm border border-gray-200 bg-white">
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="text-lg font-semibold text-stone-800 tracking-widest">
                             {{ $element->category }}
