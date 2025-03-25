@@ -37,6 +37,61 @@
                 </div>
             @endforeach
         </div>
-
     </div>
+
+
+
+
+
+    {{-- Comment Form --}}
+    <form action="{{ route('comment.store', $post->id) }}" method="post" class="mt-6">
+        @csrf
+
+        <div class="flex items-center gap-2">
+            <input type="text" name="comment" id="comment" maxlength="500" class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="コメントを入力...(500文字以内)" value="{{ old('comment') }}">
+            <button type="submit" class="px-4 py-2 text-sm bg-stone-200 hover:bg-stone-300 text-stone-800 rounded-md shadow-sm">送信</button>
+        </div>
+
+        {{-- Error --}}
+        @error('comment')
+            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+        @enderror
+    </form>
+
+    {{-- Display all the comments here --}}
+    @if ($post->comments)
+        <div class="mt-4 space-y-3">
+            @foreach ($post->comments as $comment)
+                <div class="bg-stone-50 border border-stone-200 rounded-md p-4 flex justify-between items-start">
+                    <div class="flex-1">
+                        <div class="text-sm font-semibold text-stone-700">
+                            <a href="{{ route('profile.show', $comment->user_id) }}">
+                                {{ $comment->user->name }}
+                            </a>
+                        </div>
+                        <div class="text-xs text-stone-400 mb-1">{{ $comment->created_at }}</div>
+                        <p class="text-sm text-stone-800 mb-0">{{ $comment->content }}</p>
+                    </div>
+                    @if ($comment->user_id == Auth::user()->id)
+                        <form action="{{ route('comment.delete', $comment->id) }}" method="post" class="ml-2">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    @endif
+
+
+
+
+
+
+
+
+
 </x-app-layout>
