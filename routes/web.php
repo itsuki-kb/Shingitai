@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 
 //ログインしていない場合は、サイト紹介ページへ
@@ -32,6 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/like/{post_id}', [LikeController::class, 'addLike'])->name('like.add');
     Route::delete('/like/{post_id}', [LikeController::class, 'deleteLike'])->name('like.delete');
 
+    //Comment
+    Route::post('/comment/{post_id}', [CommentController::class, 'store'])->name('comment.store');
+    Route::delete('/comment/{post_id}', [CommentController::class, 'delete'])->name('comment.delete');
 });
 
 require __DIR__.'/auth.php';
