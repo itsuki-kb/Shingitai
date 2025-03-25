@@ -30,7 +30,7 @@ class ProfileController extends Controller
             ->with('elements')
             ->withCount('likes')
             ->latest('date')
-            ->paginate(10);
+            ->get();
 
         //ログインユーザーがLikeしてあるポスト一覧のpost_idだけをArray形式で取得
         $liked_post_ids = Like::where('user_id', Auth::user()->id)
@@ -38,6 +38,27 @@ class ProfileController extends Controller
             ->toArray();
 
         return view('profile.show', compact('user', 'all_posts', 'liked_post_ids'));
+    }
+
+    public function showLikes($user_id)
+    {
+        $user = $this->user->findOrFail($user_id);
+
+        // Likeしたポストだけをすべて取得
+        $all_posts = Post::whereHas('likes', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+            })
+            ->with('elements')
+            ->withCount('likes')
+            ->latest('date')
+            ->get();
+
+        //ログインユーザーがLikeしてあるポスト一覧のpost_idだけをArray形式で取得
+        $liked_post_ids = Like::where('user_id', Auth::user()->id)
+            ->pluck('post_id')
+            ->toArray();
+
+        return view('profile.likes', compact('user', 'all_posts', 'liked_post_ids'));
 
     }
 

@@ -111,7 +111,12 @@ class PostController extends Controller
     public function show($post_id)
     {
         $post = $this->post
-            ->with(['user', 'elements', 'comments'])
+            ->with([
+                'user',
+                'elements',
+                'comments' =>function($query){
+                    $query->latest();
+                }])
             ->withCount('likes')
             ->findOrFail($post_id);
 

@@ -11,7 +11,11 @@
         <div class="flex justify-between mb-8 ps-2 pe-2">
             <div class="flex flex-col flex-start">
                 <p class="text-sm text-stone-500 pb-2">{{ $post->date }}</p>
-                <p class="text-md font-semibold text-stone-700">{{ $post->user->name }}</p>
+                <p class="text-md font-semibold text-stone-700">
+                    <a href="{{ route('profile.show', $post->user_id) }}">
+                        {{ $post->user->name }}
+                    </a>
+                </p>
             </div>
             <div class="flex content-end me-1">
                 <x-posts.likes :post="$post" :liked_post_ids="$liked_post_ids"></x-posts-likes>
@@ -60,7 +64,7 @@
 
     {{-- Display all the comments here --}}
     @if ($post->comments)
-        <div class="mt-4 space-y-3">
+        <div class="mt-4 space-y-3 max-h-80 overflow-y-auto pr-2">
             @foreach ($post->comments as $comment)
                 <div class="bg-stone-50 border border-stone-200 rounded-md p-4 flex justify-between items-start">
                     <div class="flex-1">

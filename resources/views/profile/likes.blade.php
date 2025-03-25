@@ -34,15 +34,15 @@
 
     <div class="flex flex-start gap-4">
         <div class="flex">
-            <a href="#">All Posts</a>
+            <a href="{{ route('profile.show', $user->id) }}" class="text-stone-500">All Posts</a>
         </div>
         <div class="flex">
-            <a href="{{ route('profile.likes', $user->id) }}" class="text-stone-500">Likes</a>
+            <a href="#">Likes</a>
         </div>
     </div>
 
     {{-- ユーザーの投稿を表示 --}}
-    <div class="mt-4 space-y-3 max-h-screen overflow-y-auto pt-4 py-2 pr-2 border-t-4 border-black-300 border-double">
+    <div class="mt-4 space-y-3 max-h-screen overflow-y-auto pt-4 py-2 pr-2 border-t-4 border-red-100 border-double">
         @forelse ($all_posts as $post)
             <div class="bg-stone-50 border border-stone-200 rounded-xl p-6 mb-6 shadow-sm w-full min-w-[640px]">
                 {{-- Header --}}
@@ -107,10 +107,7 @@
             </div>
         @empty
             <div class="text-center mt-40">
-                <h2 class="text-gray-500 text-lg">投稿はまだありません。</h2>
-                <a href="{{ route('post.create') }}" class="text-rose-600 hover:underline mt-2 inline-block">
-                    ➕ 新しい投稿を作成
-                </a>
+                <h2 class="text-gray-500 text-lg">Likeした投稿はまだありません。</h2>
             </div>
         @endforelse
     </div>
