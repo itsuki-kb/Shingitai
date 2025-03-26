@@ -22,46 +22,27 @@ class ProfileController extends Controller
         $this->user = $user;
     }
 
-
-    public function show($user_id)
+    public function show($user_id, Request $request)
     {
         $user = $this->user->findOrFail($user_id);
-        $all_posts = $user->posts()
-            ->with('elements')
-            ->withCount('likes')
-            ->latest('date')
-            ->get();
+        $tab = $request->query('tab', 'posts'); // tabのデフォルトをpostsに指定している
+
+        $all_listing_data = match ($tab) {
+            //Post情報を保持
+            'likes' => Post::whereIn('id', $user->likes()->pluck('post_id'))->with('elements')->withCount('likes')->latest('date')->get(),
+            default => $user->posts()->with('elements')->withCount('likes')->latest('date')->get(),
+            //User情報を保持
+            'followings' => $user->followings()->get(),
+            'followers' => $user->followers()->get(),
+        };
 
         //ログインユーザーがLikeしてあるポスト一覧のpost_idだけをArray形式で取得
         $liked_post_ids = Like::where('user_id', Auth::user()->id)
             ->pluck('post_id')
             ->toArray();
 
-        return view('profile.show', compact('user', 'all_posts', 'liked_post_ids'));
+        return view('profile.show', compact('user', 'all_listing_data', 'tab', 'liked_post_ids'));
     }
-
-    public function showLikes($user_id)
-    {
-        $user = $this->user->findOrFail($user_id);
-
-        // Likeしたポストだけをすべて取得
-        $all_posts = Post::whereHas('likes', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-            })
-            ->with('elements')
-            ->withCount('likes')
-            ->latest('date')
-            ->get();
-
-        //ログインユーザーがLikeしてあるポスト一覧のpost_idだけをArray形式で取得
-        $liked_post_ids = Like::where('user_id', Auth::user()->id)
-            ->pluck('post_id')
-            ->toArray();
-
-        return view('profile.likes', compact('user', 'all_posts', 'liked_post_ids'));
-
-    }
-
 
     /**
      * Display the user's profile form.
