@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 
@@ -37,6 +38,11 @@ Route::middleware('auth')->group(function () {
     //Comment
     Route::post('/comment/{post_id}', [CommentController::class, 'store'])->name('comment.store');
     Route::delete('/comment/{post_id}', [CommentController::class, 'delete'])->name('comment.delete');
+
+    //follow
+    Route::post('/follow/{user_id}', [FollowController::class, 'follow'])->name('follow');
+    Route::delete('/follow/{user_id}', [FollowController::class, 'unfollow'])->name('unfollow');
+
 });
 
 require __DIR__.'/auth.php';

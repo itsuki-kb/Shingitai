@@ -20,21 +20,32 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // elements()とlikes()を同時にEager Loadingで取得
-        $all_posts = $this->post
-            ->with('elements', 'likes')
-            ->withCount('likes')    //likeの数も取得
-            ->latest()
-            ->paginate(10);
+        // tabのデフォルトをall_postsに指定
+        $tab = $request->query('tab', 'all_posts');
+
+        $all_listing_data = match ($tab) {
+            'following_posts' => $this->post
+                              ->whereIn('user_id', Auth::user()->followings()->pluck('followee_id'))
+                              ->with(['elements', 'likes'])
+                              ->withCount('likes')
+                              ->latest()
+                              ->paginate(10),
+
+            default => $this->post
+                    ->with('elements', 'likes')
+                    ->withCount('likes')    //likeの数も取得
+                    ->latest()
+                    ->paginate(10),
+        };
 
         //ログインユーザーがLikeしてあるポスト一覧のpost_idだけをArray形式で取得
         $liked_post_ids = Like::where('user_id', Auth::user()->id)
             ->pluck('post_id')
             ->toArray();
 
-        return view('posts.index', compact('all_posts', 'liked_post_ids'));
+        return view('posts.index', compact('all_listing_data', 'tab', 'liked_post_ids'));
     }
 
     /**
