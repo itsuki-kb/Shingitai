@@ -28,27 +28,18 @@
     </style>
 </head>
 
-<body class="antialiased bg-stone-100 text-stone-800">
+<body class="antialiased bg-stone-100 text-stone-800 bg-[url('/public/images/washi-white.jpg')] bg-cover bg-center">
     <div class="min-h-screen flex flex-col">
         {{-- ナビゲーション --}}
         @include('layouts.navigation')
 
-        {{-- ページヘッダー --}}
-        @isset($header)
-            <header class="">
-                <div class="w-full max-w-5xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
-        @endisset
-
         {{-- メイン --}}
-        <main class="w-full max-w-5xl min-w-[640px] mx-auto px-4 py-8 min-h-[60vh]">
+        <main class="w-full max-w-5xl min-w-[640px] mx-auto px-4 py-6 min-h-[60vh]">
             {{ $slot }}
         </main>
 
         {{-- フッター（任意） --}}
-        <footer class="text-center text-xs text-stone-500 py-6">
+        <footer class="text-center text-xs text-stone-500">
             &copy; {{ date('Y') }} Shingitai
         </footer>
     </div>
