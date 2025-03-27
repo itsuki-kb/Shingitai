@@ -47,16 +47,16 @@
             @if ($post->user_id === Auth::id())
                 <div class="flex text-end space-x-2 items-center">
                     <a href="{{ route('post.edit', $post->id) }}"
-                        class="inline-flex items-center px-4 py-1 bg-amber-600 text-white rounded shadow hover:bg-amber-700 text-sm">
-                        <i class="fas fa-pen mr-1"></i> 編集
+                        class="inline-flex items-center px-3 py-1 bg-stone-400 text-white rounded shadow hover:bg-stone-300 text-sm">
+                        <i class="fas fa-pen"></i>
                     </a>
 
                     <button
                     x-data
                     x-on:click="$dispatch('open-modal', 'delete-post-{{ $post->id }}')"
-                    class="inline-flex items-center px-4 py-1 bg-rose-600 text-white rounded shadow hover:bg-rose-700 text-sm"
+                    class="inline-flex items-center px-3 py-1 bg-rose-600 text-white rounded shadow hover:bg-rose-700 text-sm"
                     >
-                        <i class="fas fa-trash-alt mr-1"></i> 削除
+                        <i class="fas fa-trash-alt"></i>
                     </button>
 
                     {{-- モーダル読み込み --}}

@@ -6,6 +6,7 @@ use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\View\View;
+use App\Models\PostElement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -41,8 +42,53 @@ class ProfileController extends Controller
             ->pluck('post_id')
             ->toArray();
 
-        return view('profile.show', compact('user', 'all_listing_data', 'tab', 'liked_post_ids'));
+        $calendar = $this->getConditionCalender($user_id);
+
+        return view('profile.show', compact('user', 'all_listing_data', 'tab', 'liked_post_ids', 'calendar'));
     }
+
+    private function getConditionCalender($user_id)
+    {
+        $startDate = now()->subDays(6)->startOfDay(); // 1週間前から
+        $endDate = now()->endOfDay();                // 今日まで
+
+        // 該当期間のpost_elementsを取得
+        $elements = PostElement::whereHas('post', function ($query) use ($user_id, $startDate, $endDate) {
+            $query->where('user_id', $user_id)
+                  ->whereBetween('date', [$startDate, $endDate]);
+        })->get();
+
+        // 日付の配列（7日分, 0~6で6が今日）
+        $dates = collect(range(0, 6))->map(fn($i) => now()->subDays(6 - $i)->format('Y-m-d'));
+
+        // カテゴリごとに初期化
+        $conditions = [
+            '心' => [],
+            '技' => [],
+            '体' => [],
+        ];
+
+        foreach ($dates as $date) {
+            foreach (['心', '技', '体'] as $category) {
+                $condition = $elements->first(fn($e) =>
+                    //categoryが心　で、　
+                    $e->category === $category && $e->post->date === $date
+                )?->condition;
+
+                $conditions[$category][$date] = match($condition) {
+                    1 => true,
+                    0 => false,
+                    default => '',
+                };
+            }
+        }
+
+        return [
+            'dates' => $dates,  //index array
+            'conditions' => $conditions, //[category][condition]のassociative array
+        ];
+    }
+
 
     /**
      * Display the user's profile form.

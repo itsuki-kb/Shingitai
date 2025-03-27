@@ -84,11 +84,11 @@
             {{-- Submit --}}
             <div class="text-center flex">
                 <button type="submit"
-                class="inline-block px-6 py-2 bg-amber-600 text-white rounded-md shadow hover:bg-amber-700 transition">
-                <i class="fas fa-paper-plane mr-1"></i> 更新する
+                class="inline-block px-6 py-2 bg-green-800 text-white rounded-md shadow hover:bg-green-600 transition">
+                <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
-        
+
     </form>
 </x-app-layout>
