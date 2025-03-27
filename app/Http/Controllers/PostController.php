@@ -22,6 +22,9 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
+        //検索ワード
+        $keyword = $request->input('keyword');
+
         // tabのデフォルトをall_postsに指定
         $tab = $request->query('tab', 'all_posts');
 
@@ -29,12 +32,22 @@ class PostController extends Controller
             'following_posts' => $this->post
                               ->whereIn('user_id', Auth::user()->followings()->pluck('followee_id'))
                               ->with(['elements', 'likes'])
+                              ->when($keyword, function ($query, $keyword) {
+                                    $query->whereHas('elements', function ($q) use ($keyword) {
+                                        $q->where('content', 'like', "%{$keyword}%");
+                                    });
+                                })
                               ->withCount('likes')
                               ->latest()
                               ->paginate(10),
 
             default => $this->post
                     ->with('elements', 'likes')
+                    ->when($keyword, function ($query, $keyword) {
+                        $query->whereHas('elements', function ($q) use ($keyword) {
+                            $q->where('content', 'like', "%{$keyword}%");
+                        });
+                    })
                     ->withCount('likes')    //likeの数も取得
                     ->latest()
                     ->paginate(10),
@@ -56,8 +69,26 @@ class PostController extends Controller
         //心技体のconditionをデフォルトですべて1(true)が選択されるよう配列で渡す
         $conditions = [1, 1, 1];
 
-        return view('posts.create')
-            ->with('conditions', $conditions);
+        // 既に投稿済みの日付と、そのpost idを取得
+        $existingPosts = $this->getExistingPosts();
+
+        return view('posts.create', compact('conditions', 'existingPosts'));
+    }
+
+    private function getExistingPosts()
+    {
+        $existingPosts = $this->post
+            ->where('user_id', Auth::id())
+            ->get(['id', 'date'])
+            ->map(function ($post) {
+                return [
+                    'date' => $post->date,
+                    'id' => $post->id,
+                ];
+            })
+            ->toArray();
+
+        return $existingPosts;
     }
 
     /**
@@ -65,29 +96,15 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        /**
-         *postsテーブルに日付を保管して、post_idを生成する
-         *post_contentsテーブルに心技体の内容を補完するFunctionを呼び出す
-         *post_contentsテーブルに内容を補完する
-         *indexにリダイレクトする
-         *あとでつくる：同じ日付のそのユーザーの投稿があれば、編集に限定する
-         *　　　　　　　（日付選択時にJavascriptでメッセージ表示）
-         */
-
          $validated = $request->validate([
-            'date'            => 'required',
-            'heart_condition' => 'required|in:true,false',
-            'heart_content'   => 'required|string',
-            'skill_condition' => 'required|in:true,false',
-            'skill_content'   => 'required|string',
-            'body_condition'  => 'required|in:true,false',
-            'body_content'    => 'required|string'
+            'date'            => 'required|date',
+            'heart_condition' => 'required|boolean',
+            'heart_content'   => 'required|string|max:500',
+            'skill_condition' => 'required|boolean',
+            'skill_content'   => 'required|string|max:500',
+            'body_condition'  => 'required|boolean',
+            'body_content'    => 'required|string|max:500'
         ]);
-
-        // 文字列 "true"/"false" → 数値 1/0 に変換
-        $validated['heart_condition'] = $validated['heart_condition'] === 'true' ? 1 : 0;
-        $validated['skill_condition'] = $validated['skill_condition'] === 'true' ? 1 : 0;
-        $validated['body_condition'] = $validated['body_condition'] === 'true' ? 1 : 0;
 
         $post = Post::create([
             'user_id' => Auth::user()->id,
@@ -112,7 +129,7 @@ class PostController extends Controller
             ]
         ]);
 
-        return redirect()->route('post.index')->with('success', '投稿が完了しました！');
+        return redirect()->route('post.index');
 
     }
 
@@ -157,7 +174,10 @@ class PostController extends Controller
                 2 => $body->condition
             ];
 
-        return view('posts.edit', compact('post', 'heart', 'skill', 'body', 'conditions'));
+            // 既に投稿済みの日付と、そのpost idを取得
+            $existingPosts = $existingPosts = $this->getExistingPosts();
+
+        return view('posts.edit', compact('post', 'heart', 'skill', 'body', 'conditions', 'existingPosts'));
 
     }
 
@@ -167,19 +187,14 @@ class PostController extends Controller
     public function update(Request $request, $post_id)
     {
         $validated = $request->validate([
-            'date'            => 'required',
-            'heart_condition' => 'required|in:true,false',
+            'date'            => 'required|date',
+            'heart_condition' => 'required|boolean',
             'heart_content'   => 'required|string|max:500',
-            'skill_condition' => 'required|in:true,false',
+            'skill_condition' => 'required|boolean',
             'skill_content'   => 'required|string|max:500',
-            'body_condition'  => 'required|in:true,false',
+            'body_condition'  => 'required|boolean',
             'body_content'    => 'required|string|max:500'
         ]);
-
-        // 文字列 "true"/"false" → 数値 1/0 に変換
-        $validated['heart_condition'] = $validated['heart_condition'] === 'true' ? 1 : 0;
-        $validated['skill_condition'] = $validated['skill_condition'] === 'true' ? 1 : 0;
-        $validated['body_condition'] = $validated['body_condition'] === 'true' ? 1 : 0;
 
         //postsテーブルを更新
         $post = $this->post->findOrFail($post_id);
@@ -201,7 +216,7 @@ class PostController extends Controller
                 }
             }
         });
-        return redirect()->route('post.show', $post_id)->with('success', '編集が完了しました！');
+        return redirect()->route('post.show', $post_id);
     }
 
     /**

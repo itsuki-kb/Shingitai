@@ -1,25 +1,13 @@
 <x-app-layout>
     <form action="{{ route('post.update', $post->id) }}" method="post"
-        class="max-w-5xl mx-auto h-[85vh] bg-white p-6 rounded-xl shadow-md border border-stone-200 space-y-4">
+        class="max-w-5xl mx-auto bg-white p-6 rounded-xl shadow-md border border-stone-200 space-y-4">
         @csrf
         @method('patch')
 
         <h2 class="pt-0 font-bold m-0 text-lg">投稿編集</h2>
 
         {{-- Date --}}
-        <div>
-            <label for="date" class="block text-sm font-medium text-stone-700">日付</label>
-            <input
-                type="date"
-                name="date"
-                id="date"
-                value="{{ old('date', $post->date) }}"
-                class="mt-1 block w-full rounded-md border-stone-300 shadow-sm focus:border-amber-500 focus:ring-amber-200"
-            >
-            @error('date')
-                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-            @enderror
-        </div>
+        @include('components.posts.date-select')
 
         {{-- 心 --}}
         <div>
@@ -78,7 +66,10 @@
 
         <div class="flex justify-between">
             <div class="flex">
-                <p class="text-sm text-stone-400 ps-3">*それぞれ500文字以内で入力してください。</p>
+                <p class="text-sm text-stone-400 ps-3">
+                    *日付が重複した投稿はできません。<br>
+                    *それぞれ500文字以内で入力してください。
+                </p>
             </div>
 
             {{-- Submit --}}

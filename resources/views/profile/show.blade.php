@@ -36,7 +36,7 @@
             <p class="text-sm text-stone-600 mb-2">{{ $user->profile }}</p>
 
             {{-- コンディションカレンダー --}}
-            <table class="table text-center mt-4 w-100 mx-2">
+            <table class="table text-center mt-4 w-100 mx-8">
                 <thead>
                     <tr>
                         <th></th>
@@ -90,7 +90,6 @@
     @if ($tab === 'posts' || $tab === 'likes')
         {{-- ユーザーの投稿を表示 --}}
         <div class="mt-4 space-y-3 h-[45vh] overflow-y-auto pt-4 py-2 pr-2 border-t-4 border-black-300 border-double">
-            {{-- <x-posts.post-list :all_listing_data="$all_listing_data" :liked_post_ids="$liked_post_ids" /> --}}
             @include('components.posts.post-list', [
                         'all_listing_data' => $all_listing_data,
                         'liked_post_ids' => $liked_post_ids
