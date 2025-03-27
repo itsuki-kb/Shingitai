@@ -5,7 +5,7 @@
         @csrf
 
         <h2 class="pt-0 font-bold m-0 text-lg">新規投稿</h2>
-        
+
         {{-- Date --}}
         <div>
             <label for="date" class="block text-sm font-medium text-stone-700">日付</label>
@@ -79,7 +79,7 @@
             @enderror
         </div>
 
-        <div class="flex justify-between">
+        <div class="flex justify-between mt-4">
             <div class="flex">
                 <p class="text-sm text-stone-400 ps-3">*それぞれ500文字以内で入力してください。</p>
             </div>
@@ -87,8 +87,8 @@
             {{-- Submit --}}
             <div class="text-center flex">
                 <button type="submit"
-                    class="inline-block px-6 py-2 bg-amber-600 text-white rounded-md shadow hover:bg-amber-700 transition">
-                    <i class="fas fa-paper-plane mr-1"></i> 投稿
+                    class="inline-block px-6 py-2 bg-green-800 text-white rounded-md shadow hover:bg-green-600 transition">
+                    <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>

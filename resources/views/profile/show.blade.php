@@ -15,7 +15,7 @@
         </div>
 
         {{-- ユーザー情報 --}}
-        <div class="sm:w-3/4 w-full flex flex-col justify-top">
+        <div class="sm:w-3/4 w-full flex flex-col justify-between">
             <div class="flex items-center mb-2">
                 <h2 class="text-2xl font-semibold text-stone-700 me-4 inline-flex">{{ $user->name }}</h2>
                 {{-- 自分のページなら、編集リンクを表示 --}}
@@ -32,7 +32,39 @@
                 @endif
             </div>
 
-            <p class="text-sm text-gray-600 mb-2">{{ $user->profile }}</p>
+            {{-- プロフィール文 --}}
+            <p class="text-sm text-stone-600 mb-2">{{ $user->profile }}</p>
+
+            {{-- コンディションカレンダー --}}
+            <table class="table text-center mt-4 w-100 mx-2">
+                <thead>
+                    <tr>
+                        <th></th>
+                        @foreach($calendar['dates'] as $date)
+                            <th class="text-stone-600 text-sm pb-1">{{ \Carbon\Carbon::parse($date)->format('m/d') }}</th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(['心', '技', '体'] as $category)
+                        <tr>
+                            <th class="text-sm text-stone-700">{{ $category }}</th>
+                            @foreach($calendar['dates'] as $date)
+                                <td>
+                                    @if ( $calendar['conditions'][$category][$date] === true )
+                                        <i class="fas fa-sun text-md bg-amber-200 text-amber-800 rounded-full p-1"></i>
+                                    @elseif ( $calendar['conditions'][$category][$date] === false )
+                                        <i class="fas fa-moon text-md bg-indigo-200 text-indigo-800 rounded-full p-1"></i>
+                                    @else
+                                        -
+                                    @endif
+                                    </td>
+                            @endforeach
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
         </div>
     </div>
 
