@@ -3,13 +3,21 @@
 @forelse ($all_listing_data as $post)
     <div class="bg-stone-50 border border-stone-200 rounded-xl p-6 mb-6 shadow-sm w-full min-w-[640px]">
         {{-- Header --}}
-        <div class="flex justify-between items-center mb-3 ms-2">
-            <div class="text-stone-600 text-sm">
-                📅 {{ $post->date }}
-                <a href="{{ route('profile.show', $post->user_id) }}">
-                    👤 {{ $post->user->name }}
-                </a>
-            </div>
+        <div class="flex justify-start items-end mb-3 ms-2">
+            <span class="flex me-4">{{ $post->date }}</span>
+
+            <a href="{{ route('profile.show', $post->user_id) }}" class="flex items-end">
+                @if ($post->user->avatar)
+                    <img src="{{ asset('storage/' . $post->user->avatar) }}"
+                    alt="{{ $post->user->name }}"
+                    class="flex me-1 w-[30px] rounded-full border border-gray-300 object-cover aspect-square">
+                @else
+                    <div class="w-[30px] rounded-full justify-center items-center bg-gray-100 border border-dashed border-gray-300 aspect-square">
+                        <i class="flex fa-solid fa-image text-6xl text-gray-400"></i>
+                    </div>
+                @endif
+                <span class="flex">{{ $post->user->name }}</span>
+            </a>
         </div>
 
         {{-- 心技体：横並び表示 --}}

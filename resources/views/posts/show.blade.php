@@ -17,8 +17,32 @@
                     </a>
                 </p>
             </div>
-            <div class="flex content-end me-1">
-                <x-posts.likes :post="$post" :liked_post_ids="$liked_post_ids"></x-posts-likes>
+            <div class="flex justify-between pt-4">
+                {{-- Likes --}}
+                <div class="flex items-center me-3">
+                    <x-posts.likes :post="$post" :liked_post_ids="$liked_post_ids"/>
+                </div>
+
+                {{-- アクションボタン --}}
+                @if ($post->user_id === Auth::id())
+                    <div class="flex text-end space-x-2 items-center">
+                        <a href="{{ route('post.edit', $post->id) }}"
+                            class="inline-flex items-center px-3 py-1 bg-stone-400 text-white rounded shadow hover:bg-stone-300 text-sm">
+                            <i class="fas fa-pen"></i>
+                        </a>
+
+                        <button
+                        x-data
+                        x-on:click="$dispatch('open-modal', 'delete-post-{{ $post->id }}')"
+                        class="inline-flex items-center px-3 py-1 bg-rose-600 text-white rounded shadow hover:bg-rose-700 text-sm"
+                        >
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+
+                        {{-- モーダル読み込み --}}
+                        <x-posts.modal.delete :post="$post" />
+                    </div>
+                @endif
             </div>
         </div>
 
