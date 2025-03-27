@@ -5,17 +5,15 @@
 @endphp
 
 {{-- json_encodeでbooleanのtrue/falseに指定（textとして受け取られるのを回避）--}}
-<div x-data="followHandler({{ $user->id }}, {{ json_encode($isFollowing) }})">
+<div x-data="followHandler({{ $user->id }}, {{ json_encode($isFollowing) }})" class="inline-flex">
     <button
-        @click="toggleFollow"
-        class="text-sm px-4 py-1 rounded shadow transition
-            focus:outline-none
-            text-white"
-        :class="following
-            ? 'bg-rose-600 hover:bg-rose-700'
-            : 'bg-amber-600 hover:bg-amber-700'"
+    @click="toggleFollow"
+    class="text-sm px-4 py-1 rounded border border-white text-green-700
+        hover:text-opacity-50
+        transition
+        focus:outline-none focus:ring-0"
     >
-        <span x-text="following ? 'Unfollow' : 'Follow'"></span>
+        <span x-text="following ? 'Following!' : 'Follow?'"></span>
     </button>
 </div>
 

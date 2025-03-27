@@ -1,14 +1,11 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold text-stone-700 tracking-wide  pb-1">
-            新規投稿作成
-        </h2>
-    </x-slot>
 
     <form action="{{ route('post.store') }}" method="post"
-        class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-md border border-stone-200 space-y-8">
+        class="max-w-5xl mx-auto h-[85vh] bg-stone-50 p-6 rounded-xl shadow-md border border-stone-200 space-y-4">
         @csrf
 
+        <h2 class="pt-0 font-bold m-0 text-lg">新規投稿</h2>
+        
         {{-- Date --}}
         <div>
             <label for="date" class="block text-sm font-medium text-stone-700">日付</label>
@@ -82,16 +79,18 @@
             @enderror
         </div>
 
-        <div>
-            <p class="text-sm text-stone-400 ps-3">*それぞれ500文字以内で入力してください。</p>
-        </div>
+        <div class="flex justify-between">
+            <div class="flex">
+                <p class="text-sm text-stone-400 ps-3">*それぞれ500文字以内で入力してください。</p>
+            </div>
 
-        {{-- Submit --}}
-        <div class="text-center">
-            <button type="submit"
-                class="inline-block px-6 py-2 bg-amber-600 text-white rounded-md shadow hover:bg-amber-700 transition">
-                <i class="fas fa-paper-plane mr-1"></i> 投稿する
-            </button>
+            {{-- Submit --}}
+            <div class="text-center flex">
+                <button type="submit"
+                    class="inline-block px-6 py-2 bg-amber-600 text-white rounded-md shadow hover:bg-amber-700 transition">
+                    <i class="fas fa-paper-plane mr-1"></i> 投稿
+                </button>
+            </div>
         </div>
     </form>
 </x-app-layout>
