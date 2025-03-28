@@ -12,14 +12,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 //以下の機能はすべてログインしているユーザーに限定する
 Route::middleware('auth')->group(function () {
-    //トップページ（タイムライン）
-    //Route::get('/index', [PostController::class, 'index']);
+    //Dadshboard
+    Route::get('/dashboard', [PostController::class, 'index'])->name('dashboard');
 
     //Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
