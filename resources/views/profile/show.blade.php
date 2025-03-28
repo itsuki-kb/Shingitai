@@ -98,7 +98,9 @@
     @endif
 
     @if (($tab === 'followings' || $tab === 'followers'))
-        <x-follows.following-follower-list :all_listing_data="$all_listing_data"/>
+        <div class="mt-4 space-y-3 h-[45vh] overflow-y-auto pt-4 py-2 pr-2 border-t-4 border-black-300 border-double">
+            <x-follows.following-follower-list :all_listing_data="$all_listing_data"/>
+        </div>
     @endif
 
 </x-app-layout>

@@ -12,9 +12,7 @@
                     alt="{{ $post->user->name }}"
                     class="flex me-1 w-[30px] rounded-full border border-gray-300 object-cover aspect-square">
                 @else
-                    <div class="w-[30px] rounded-full justify-center items-center bg-gray-100 border border-dashed border-gray-300 aspect-square">
-                        <i class="flex fa-solid fa-image text-6xl text-gray-400"></i>
-                    </div>
+                    <i class="fa-solid fa-person text-stone-400 text-xl ps-[0.45rem] flex me-1 w-[30px] rounded-full border border-gray-300 aspect-square"></i>
                 @endif
                 <span class="flex">{{ $post->user->name }}</span>
             </a>
@@ -75,6 +73,6 @@
     </div>
 @empty
     <div class="text-center mt-20">
-        <h2 class="text-gray-500 text-lg">投稿はまだありません。</h2>
+        <h2 class="text-stone-500 text-md">投稿はまだありません。</h2>
     </div>
 @endforelse
