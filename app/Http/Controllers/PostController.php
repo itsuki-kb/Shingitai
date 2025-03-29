@@ -7,6 +7,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -75,6 +76,7 @@ class PostController extends Controller
         return view('posts.create', compact('conditions', 'existingPosts'));
     }
 
+    //ログインユーザーの投稿済みの日付を取得（「投稿済み」モーダルの表示判定のため）
     private function getExistingPosts()
     {
         $existingPosts = $this->post
@@ -106,11 +108,13 @@ class PostController extends Controller
             'body_content'    => 'required|string|max:500'
         ]);
 
+        //postsテーブルへの投稿
         $post = Post::create([
             'user_id' => Auth::user()->id,
             'date' => $validated['date'],
         ]);
 
+        //post_elementsテーブルへの投稿
         $post->elements()->createMany([
             [
                 'category' => '心',
@@ -130,7 +134,6 @@ class PostController extends Controller
         ]);
 
         return redirect()->route('post.index');
-
     }
 
     /**
@@ -148,6 +151,7 @@ class PostController extends Controller
             ->withCount('likes')
             ->findOrFail($post_id);
 
+        //Likeハートマークの表示判定のため、ログインユーザーがLikeした投稿のIDを配列で取得
         $liked_post_ids = Like::where('user_id', Auth::user()->id)
             ->where('post_id', $post_id)
             ->pluck('post_id')
@@ -165,17 +169,23 @@ class PostController extends Controller
             ->with(['elements'])
             ->findOrFail($post_id);
 
-            $heart = $post->elements->firstWhere('category', '心');
-            $skill = $post->elements->firstWhere('category', '技');
-            $body  = $post->elements->firstWhere('category', '体');
-            $conditions = [
-                0 => $heart->condition, // 1 is Sun(True), 0 is Moon(False)
-                1 => $skill->condition,
-                2 => $body->condition
-            ];
+        //  投稿の所有者かチェック(AppServicePrividerから)
+        if (Gate::denies('isOwner', $post)) {
+            return redirect()->route('post.index');
+        }
 
-            // 既に投稿済みの日付と、そのpost idを取得
-            $existingPosts = $existingPosts = $this->getExistingPosts();
+        //文章とコンディションを取得
+        $heart = $post->elements->firstWhere('category', '心');
+        $skill = $post->elements->firstWhere('category', '技');
+        $body  = $post->elements->firstWhere('category', '体');
+        $conditions = [
+            0 => $heart->condition, // 1 is Sun(True), 0 is Moon(False)
+            1 => $skill->condition,
+            2 => $body->condition
+        ];
+
+        // 既に投稿済みの日付と、そのpost idを取得
+        $existingPosts = $existingPosts = $this->getExistingPosts();
 
         return view('posts.edit', compact('post', 'heart', 'skill', 'body', 'conditions', 'existingPosts'));
 
@@ -225,6 +235,11 @@ class PostController extends Controller
     public function destroy($post_id)
     {
         $post = $this->post->findOrFail($post_id);
+
+        //  投稿の所有者かチェック(AppServicePrividerから)
+        if (Gate::denies('isOwner', $post)) {
+            return redirect()->route('post.index');
+        }
 
         $post->delete();
 

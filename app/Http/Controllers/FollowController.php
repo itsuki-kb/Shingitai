@@ -12,6 +12,9 @@ class FollowController extends Controller
     public function follow($user_id)
     {
         $user = User::findOrFail($user_id);
+
+        //follower_idにAuth:user->id, followee_idに$user->idを追加
+        //syncWithoutDetaching = 更新はせず、追加だけするメソッド
         Auth::user()->followings()->syncWithoutDetaching([$user->id]);
 
         return response()->json(['follow' => true]);
@@ -21,9 +24,10 @@ class FollowController extends Controller
     public function unfollow($user_id)
     {
         $user = User::findOrFail($user_id);
+
+        //follower_idがAuth:user->idで、followee_idが$user_idのデータを削除
         Auth::user()->followings()->detach($user->id);
 
-        // return back();
         return response()->json(['follow' => false]);
     }
 
