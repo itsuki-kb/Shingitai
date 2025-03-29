@@ -17,12 +17,6 @@ class LikeController extends Controller
 
     public function addLike($post_id)
     {
-        // $this->like->create([
-        //     'user_id' => Auth::user()->id,
-        //     'post_id' => $post_id
-        // ]);
-        // return redirect()->back();
-
         $this->like->firstOrCreate([
             'user_id' => Auth::id(),
             'post_id' => $post_id,
@@ -40,12 +34,8 @@ class LikeController extends Controller
 
         $like->delete();
 
-        // return redirect()->back();
         return response()->json(['liked' => false]);
-
-
     }
-
 
 
 }
